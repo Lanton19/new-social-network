@@ -9,8 +9,8 @@ let reducers = combineReducers({           // объединение редюс�
     sidebar: sidebarReducer
 }); 
 
-let store = createStore(reducers);
+let store = createStore(reducers); // создание store и передача закомбайнерных reducer
 
-window.store = store;
+window.store = store;   // сохранить store глобально. в объект window
 
 export default store;

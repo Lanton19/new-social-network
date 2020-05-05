@@ -9,10 +9,10 @@ import {Provider} from 'react-redux';
 
 // отрисовка дерева компонент
     ReactDOM.render(
-        // переключение между компонентами с заменой урлов 
-        // dispatch bind(биндим), забрав у store, чтобы внутри dispatch-а this был store
+        // Provider из react-redux - передаем store созданный с помощью createStore.
+        // Provider использует context API для того, чтобы засунуть в context store, чтобы дочерние компоненты могли до него достучаться
         <BrowserRouter>
-            <Provider store = {store}>
+            <Provider store = {store}>  
                 <App />
             </Provider>
         </BrowserRouter >, document.getElementById('root'));

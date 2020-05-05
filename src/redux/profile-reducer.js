@@ -1,7 +1,7 @@
 const ADD_POST = 'ADD-POST'; // константа чтобы не использовать строки, дабы не допустить ошибки в написании(компилятор ругнется при опечатки)
 const UPDATE_NEW_POST_TEXT = 'UPDATE-NEW-POST-TEXT';
 
-let initialState = {
+let initialState = {                       //первоначальная инициализация
     posts: [
         { id: 1, message: "Hi, how are you", likeCount: 12 },
         { id: 2, message: "How It's my first post your APP", likeCount: 32 }
@@ -17,16 +17,18 @@ const profileReducer = (state = initialState, action) =>{
                 message: state.newPostText,
                 likesCount: 0
             };
-            let stateCopy = {...state};  // копия state
-            stateCopy.posts = [...state.posts]; // меняем новый state
-            stateCopy.posts.push(newPost);  //push - добавляем в конец массива
-            stateCopy.newPostText = ''; 
-            return stateCopy;               // возвращаем новый state
+            return {
+                ...state,                         // копия state
+                posts: [...state.posts, newPost], // копируем массив меняем посты, добавляем в конец массива
+                newPostText: ''
+            };   
         } 
         case UPDATE_NEW_POST_TEXT: {
-            let stateCopy = {...state};
-            stateCopy.newPostText = action.newText;
-            return stateCopy;
+            return {
+                ...state,
+                newPostText: action.newText
+
+            }
         }
         default:
             return state;    
