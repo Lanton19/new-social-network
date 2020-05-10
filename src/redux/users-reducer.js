@@ -1,25 +1,54 @@
-const ADD_POST = 'ADD-POST'; // константа чтобы не использовать строки, дабы не допустить ошибки в написании(компилятор ругнется при опечатки)
-const UPDATE_NEW_POST_TEXT = 'UPDATE-NEW-POST-TEXT';
+const FOLLOW = 'FOLLOW'; 
+const UNFOLLOW = 'UNFOLLOW';
+const SET_USERS = 'SET_USERS';
+
 
 let initialState = {                       //первоначальная инициализация
-    users: [
-        { id: 1, fullName: 'Dmitry', status: 'I am a boss', location: {} },
-        { id: 2, message: "How It's my first post your APP", likeCount: 32 }
-    ],
+    users: [ ],
 };
 
 const usersReducer = (state = initialState, action) =>{
     switch (action.type){
-       
+        case FOLLOW: 
+            return {
+                ...state,
+               // users: [...state.users],
+                users: state.users.map(  u => {   // берем массив пользователей, делаем копию
+                    if (u.id === action.userId) {// если userID равен нужному нам пользователю
+                        return {...u, followed: true}       // делаем копию пользователя и меняем followed
+                    }
+                    return u;                     // возвращаем его же
+
+                })
+            }
+        case UNFOLLOW:
+            return {
+                ...state,
+               // users: [...state.users],
+                users: state.users.map(  u => {   // берем массив пользователей, делаем копию
+                    if (u.id === action.userId) {// если userID равен нужному нам пользователю
+                        return {...u, followed: false}       // делаем копию пользователя и меняем followed
+                    }
+                    return u;                     // возвращаем его же
+
+                })
+            }
+        case SET_USERS: {
+            return{
+                ...state,
+                users: [...state.users, ...action.users]  //взять из state старых юзеров(создать копию массива) и дописать users которые пришли из action
+            }
+        }
         default:
             return state;    
         }
 } 
 
 //создатели action (действий)
-export const addPostActionCreator = () => ({ type: ADD_POST })     
+export const followAC = (userId) => ({ type: FOLLOW, userId })     
 
-export const updateNewPostTextActionCreator = (text) =>
-        ({ type: UPDATE_NEW_POST_TEXT, newText: text })
+export const unfollowAC = (userId) => ({ type: UNFOLLOW, userId })
+
+export const setUsersAC = (users) => ({ type: SET_USERS, users })
         
 export default usersReducer;
