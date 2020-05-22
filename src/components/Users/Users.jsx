@@ -1,55 +1,50 @@
 import React from 'react';
 import styles from './users.module.css';
+import userPhoto from '../../assets/images/user.png';
+import { NavLink } from 'react-router-dom';
 
 let Users = (props) => {
 
-    if (props.users.length === 0 ) {
-    props.setUsers([
-
-        {
-            id: 1, photoUrl: 'https://im0-tub-ru.yandex.net/i?id=bd699f488887ee545be0cea97ee0bb6b&n=13&exp=1',
-            followed: false, fullName: 'Dmitry', status: 'I am a boss', location: { city: 'Minsk', country: 'Belarus' }
-        },
-        {
-            id: 2, photoUrl: 'https://im0-tub-ru.yandex.net/i?id=bd699f488887ee545be0cea97ee0bb6b&n=13&exp=1',
-            followed: true, fullName: 'Anton', status: 'I am a boss too', location: { city: 'Podolsk', country: 'Rossia' }
-        },
-        {
-            id: 3, photoUrl: 'https://im0-tub-ru.yandex.net/i?id=bd699f488887ee545be0cea97ee0bb6b&n=13&exp=1',
-            followed: true, fullName: 'Vera', status: 'I am a boss too', location: { city: 'Podolsk', country: 'Rossia' }
-        },
-        {
-            id: 4, photoUrl: 'https://im0-tub-ru.yandex.net/i?id=bd699f488887ee545be0cea97ee0bb6b&n=13&exp=1',
-            followed: false, fullName: 'Slava', status: 'I am a boss too', location: { city: 'Vidoe', country: 'Rossia' }
-        },
-        {
-            id: 4, photoUrl: 'https://im0-tub-ru.yandex.net/i?id=bd699f488887ee545be0cea97ee0bb6b&n=13&exp=1',
-            followed: false, fullName: 'Ira', status: 'I am a boss too', location: { city: 'Vidnoe', country: 'Rossia' }
-        }   
-        ]
-    )
+    let pagesCount = Math.ceil(props.totalUsersCount / props.pageSize);   // подсчет страниц, округление в большую сторону
+    let pages = [];                                             // создаем пустой массив
+    for (let i = 1; i <= pagesCount; i++) {                          // пробегаем фором 
+        pages.push(i);                                          // добавляем
     }
     return <div>
+        <div>
+            {pages.map(p => {                                  // p - pages
+                return <span className={props.currentPage === p && styles.selectedPage} 
+                // если текущая страница равна запушенной p - применить стиль 
+                    onClick={(e) => { props.onPageChanged(p); }}>{p}</span>
+                // при клике  
+            })}
+        </div>
         {
             props.users.map(u => <div key={u.id}>
                 <span>
                     <div>
-                        <img src={u.photoUrl} className={styles.userPhoto} />
+                        <NavLink to={'/profile/' + u.id }>  {/* куда ведёт */}
+                        <img src={u.photos.small != null ? u.photos.small : userPhoto} 
+                        // если фото не равен null отоброзить, иначе отобразить фото по умолчанию
+                            className={styles.userPhoto} />   
+                        </NavLink>
                     </div>
                     <div>
-                        {u.followed
+                        {u.followed      // если подписаны
+                                 // при клике на мышь отработает колбэк и возьмет в пропсах unfollow и передаст id
                             ? <button onClick={() => { props.unfollow(u.id) }}>Unfollow</button>
                             : <button onClick={() => { props.follow(u.id) }}>Follow</button>}
+                             
                     </div>
                 </span>
                 <span>
                     <span>
-                        <div>{u.fullName}</div>
+                        <div>{u.name}</div>
                         <div>{u.status}</div>
                     </span>
                     <span>
-                        <div>{u.location.country}</div>
-                        <div>{u.location.city}</div>
+                        <div>{'u.location.country'}</div>
+                        <div>{'u.location.city'}</div>
                     </span>
                 </span>
             </div>)
@@ -57,4 +52,4 @@ let Users = (props) => {
     </div>
 }
 
-export default Users;
+export default Users; 

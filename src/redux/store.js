@@ -36,7 +36,7 @@ let store = {
     },
 
     getState() {
-        return this._state;   // _state обращение к state не напрямую 
+        return this._state;   // _state обращение к state не напрямую, через геттер(свойство объекта)
     },
     subscribe(observer) {
         this._callSubscriber = observer; // наблюдатель, подписчик на изменения в store для отрисовки 

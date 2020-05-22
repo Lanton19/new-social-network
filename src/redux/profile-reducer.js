@@ -1,12 +1,14 @@
 const ADD_POST = 'ADD-POST'; // константа чтобы не использовать строки, дабы не допустить ошибки в написании(компилятор ругнется при опечатке)
 const UPDATE_NEW_POST_TEXT = 'UPDATE-NEW-POST-TEXT';
+const SET_USER_PROFILE = 'SET_USER_PROFILE';
 
 let initialState = {                       //первоначальная инициализация
     posts: [
         { id: 1, message: "Hi, how are you", likeCount: 12 },
         { id: 2, message: "How It's my first post your APP", likeCount: 32 }
     ],
-    newPostText: 'it-kamasutra.com'
+    newPostText: 'it-kamasutra.com',
+    profile: null
 };
 
 const profileReducer = (state = initialState, action) =>{
@@ -30,13 +32,18 @@ const profileReducer = (state = initialState, action) =>{
 
             }
         }
+        case SET_USER_PROFILE: {
+            return {...state, profile: action.profile}
+        }
         default:
             return state;    
         }
 } 
 
 //создатели action (действий)
-export const addPostActionCreator = () => ({ type: ADD_POST })     
+export const addPostActionCreator = () => ({ type: ADD_POST }) 
+
+export const setUserProfile = (profile) => ({ type: SET_USER_PROFILE, profile }) 
 
 export const updateNewPostTextActionCreator = (text) =>
         ({ type: UPDATE_NEW_POST_TEXT, newText: text })
