@@ -2,6 +2,8 @@ import React from 'react';
 import styles from './users.module.css';
 import userPhoto from '../../assets/images/user.png';
 import { NavLink } from 'react-router-dom';
+import axios from 'axios';
+import { usersAPI } from '../../api/api';
 
 let Users = (props) => {
 
@@ -13,8 +15,8 @@ let Users = (props) => {
     return <div>
         <div>
             {pages.map(p => {                                  // p - pages
-                return <span className={props.currentPage === p && styles.selectedPage} 
-                // если текущая страница равна запушенной p - применить стиль 
+                return <span className={props.currentPage === p && styles.selectedPage}
+                    // если текущая страница равна запушенной p - применить стиль 
                     onClick={(e) => { props.onPageChanged(p); }}>{p}</span>
                 // при клике  
             })}
@@ -23,18 +25,21 @@ let Users = (props) => {
             props.users.map(u => <div key={u.id}>
                 <span>
                     <div>
-                        <NavLink to={'/profile/' + u.id }>  {/* куда ведёт */}
-                        <img src={u.photos.small != null ? u.photos.small : userPhoto} 
-                        // если фото не равен null отоброзить, иначе отобразить фото по умолчанию
-                            className={styles.userPhoto} />   
+                        <NavLink to={'/profile/' + u.id}>  {/* куда ведёт */}
+                            <img src={u.photos.small != null ? u.photos.small : userPhoto}
+                                // если фото не равен null отоброзить, иначе отобразить фото по умолчанию
+                                className={styles.userPhoto} />
                         </NavLink>
                     </div>
                     <div>
                         {u.followed      // если подписаны
-                                 // при клике на мышь отработает колбэк и возьмет в пропсах unfollow и передаст id
-                            ? <button onClick={() => { props.unfollow(u.id) }}>Unfollow</button>
-                            : <button onClick={() => { props.follow(u.id) }}>Follow</button>}
-                             
+                            // при клике на мышь отработает колбэк и возьмет в пропсах unfollow и передаст id
+                            ? <button disabled={props.followingInProgress.some(id => id === u.id)}
+                                onClick={() => { props.unfollow(u.id) }}>
+                                Unfollow</button>
+                            : <button disabled={props.followingInProgress.some(id => id === u.id)}
+                                onClick={() => { props.follow(u.id) }}>
+                                Follow</button>}
                     </div>
                 </span>
                 <span>
@@ -51,5 +56,4 @@ let Users = (props) => {
         }
     </div>
 }
-
 export default Users; 

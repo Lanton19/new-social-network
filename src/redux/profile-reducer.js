@@ -1,3 +1,5 @@
+import { usersAPI } from "../api/api";
+
 const ADD_POST = 'ADD-POST'; // константа чтобы не использовать строки, дабы не допустить ошибки в написании(компилятор ругнется при опечатке)
 const UPDATE_NEW_POST_TEXT = 'UPDATE-NEW-POST-TEXT';
 const SET_USER_PROFILE = 'SET_USER_PROFILE';
@@ -42,9 +44,12 @@ const profileReducer = (state = initialState, action) =>{
 
 //создатели action (действий)
 export const addPostActionCreator = () => ({ type: ADD_POST }) 
-
 export const setUserProfile = (profile) => ({ type: SET_USER_PROFILE, profile }) 
-
+export const getUserProfile = (userId) => (dispatch) => {     // запросить юзерский профайл, санка
+    usersAPI.getProfile(userId).then(response => {           // доступ к телу объекта
+        dispatch(setUserProfile(response.data));
+    });
+} 
 export const updateNewPostTextActionCreator = (text) =>
         ({ type: UPDATE_NEW_POST_TEXT, newText: text })
         
