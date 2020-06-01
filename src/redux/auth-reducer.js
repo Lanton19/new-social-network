@@ -3,10 +3,10 @@ import { authAPI } from "../api/api";
 const SET_USER_DATA = 'SET_USER_DATA'; // установить пользовательские данные 
 
 let initialState = {                       //первоначальная инициализация
-    userId: null,                            
+    userId: null,                           // id юзера
     email: null,                          
     login: null, 
-    isAuth: false                                                            
+    isAuth: false                        // залогинены или нет                                    
 };
 
 const authReducer = (state = initialState, action) => {
