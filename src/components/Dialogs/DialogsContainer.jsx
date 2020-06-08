@@ -1,5 +1,5 @@
 import React from 'react';
-import { sendMessageCreator, updateNewMessageBodyCreator} from '../../redux/dialogs-reducer';
+import { sendMessageCreator } from '../../redux/dialogs-reducer';
 import Dialogs from './Dialogs';
 import { connect } from 'react-redux';
 import withAuthRedirect from '../../hoc/withAuthRedirect';
@@ -13,12 +13,9 @@ let mapStateToProps = (state) => {     //превратить часть state �
 
 let mapDispatchToProps = (dispatch) => {   // передача collback в презинтационный компонент
     return{
-        sendMessage: () => {
-            dispatch(sendMessageCreator());
-         },   // получаем coolback 
-         updateNewMessageBody: (body) => {
-            dispatch(updateNewMessageBodyCreator(body));
-         }
+        sendMessage: (newMessageBody) => {
+            dispatch(sendMessageCreator(newMessageBody));
+         }  // получаем coolback 
     }
 }
 
