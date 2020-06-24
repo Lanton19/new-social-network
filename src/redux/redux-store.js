@@ -6,6 +6,7 @@ import usersReducer from "./users-reducer";
 import authReducer from "./auth-reducer";
 import thunkMiddleware from "redux-thunk";
 import { reducer as formReducer } from 'redux-form'; 
+import appReducer from "./app-reducer";
 
 let reducers = combineReducers({           // объединение редюсеров создание объекта со свойствами
     profilePage: profileReducer,        // свойство profileReduser со значением profileReduser
@@ -13,7 +14,8 @@ let reducers = combineReducers({           // объединение редюс�
     sidebar: sidebarReducer,
     usersPage: usersReducer,
     auth: authReducer,
-    form: formReducer                   // form название в глобальном state
+    form: formReducer,                   // form название в глобальном state
+    app: appReducer
 }); 
 
 let store = createStore(reducers, applyMiddleware (thunkMiddleware)); // создание store и передача 

@@ -2,8 +2,6 @@ import React from 'react';
 import styles from './users.module.css';
 import userPhoto from '../../assets/images/user.png';
 import { NavLink } from 'react-router-dom';
-import axios from 'axios';
-import { usersAPI } from '../../api/api';
 
 let Users = (props) => {
 
@@ -15,7 +13,7 @@ let Users = (props) => {
     return <div>
         <div>
             {pages.map(p => {                                  // p - pages
-                return <span className={props.currentPage === p && styles.selectedPage}
+                return <span className={props.page === p && styles.selectedPage}
                     // если текущая страница равна запушенной p - применить стиль 
                     onClick={(e) => { props.onPageChanged(p); }}>{p}</span>
                 // при клике  

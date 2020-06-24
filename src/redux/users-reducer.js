@@ -9,10 +9,10 @@ const TOGGLE_IS_FETCHING = 'TOGGLE_IS_FETCHING'; // переключи знач�
 const TOGGLE_IS_FOLLOWONG_PROGRESS = 'TOGGLE_IS_FOLLOWONG_PROGRESS'; // переключение процесса подписки
 
 let initialState = {                       //первоначальная инициализация
-    users: [],                             // массив пользователей
+    users: [ ],                             // массив пользователей
     pageSize: 5,                           // пользователей на странице(размер страницы)
     totalUsersCount: 0,                    // общее количество пользователей
-    currentPage: 1,                        // текущая страница
+    page: 1,                        // текущая страница
     isFetching: true,                      // получаем данные от сервера?
     followingInProgress: []             // загрузка от повторного нажатия на подписку
 };
@@ -38,7 +38,6 @@ const usersReducer = (state = initialState, action) => {
                         return { ...u, followed: false }       // делаем копию пользователя и меняем followed
                     }
                     return u;                     // возвращаем его же
-
                 })
             }
         case SET_USERS: {
@@ -46,7 +45,7 @@ const usersReducer = (state = initialState, action) => {
         }
         // делаем копию стейта и подменяем свойство в этой копии
         case SET_CURRENT_PAGE: {
-            return { ...state, currentPage: action.currentPage } // устанавливаем текущую страницу
+            return { ...state, page: action.page } // устанавливаем текущую страницу
         }
         case SET_TOTAL_USERS_COUNT: {
             return { ...state, totalUsersCount: action.count } // установить общее количество пользователей
@@ -74,7 +73,7 @@ export const unfollowSuccess = (userId) => ({ type: UNFOLLOW, userId })
 
 export const setUsers = (users) => ({ type: SET_USERS, users })
 
-export const setCurrentPage = (currentPage) => ({ type: SET_CURRENT_PAGE, currentPage })
+export const setCurrentPage = (page) => ({ type: SET_CURRENT_PAGE, page })
 
 export const setTotalUsersCount = (totalUsersCount) => ({ type: SET_TOTAL_USERS_COUNT, count: totalUsersCount })
 
@@ -82,12 +81,13 @@ export const toggleIsFetching = (isFetching) => ({ type: TOGGLE_IS_FETCHING, isF
 
 export const toggleFollowingProgress = (isFetching, userID) => ({ type: TOGGLE_IS_FOLLOWONG_PROGRESS, isFetching, userID })
 
-export const getUsers = (currentPage, pageSize) => {
+export const requestUsers = (page, pageSize) => {
     return (dispatch) => {
 
         dispatch(toggleIsFetching(true));  // активация крутилки
+        dispatch(setCurrentPage(page));
 
-        usersAPI.getUsers(currentPage, pageSize).then(data => {// когда придет ответ от сервера, получаем data
+        usersAPI.requestUsers(page, pageSize).then(data => {    // когда придет ответ от сервера, получаем data
             dispatch(toggleIsFetching(false));
             dispatch(setUsers(data.items));                // устанавливаем пользователей из response
             dispatch(setTotalUsersCount(data.totalCount));

@@ -8,30 +8,43 @@ import { compose } from 'redux';
 class ProfileContainer extends React.Component {        // компонент для запроса на сервак 
     componentDidMount() {
         let userId = this.props.match.params.userId;   // получаем userID из API
-        if (!userId) { userId = 2; } // если userId нет загрузить второго пользователя
+        if (!userId) {
+            userId = this.props.authorizedUserId;
+            if (!userId) {
+                this.props.history.push('./login');
+            }
+        } // если userId нет загрузить свой профайл
         this.props.getUserProfile(userId);
         this.props.getStatus(userId);
     }
-    render() { 
+    render() {
+       // console.log("RENDER PROFILE");
         return (
-            < Profile {...this.props} profile={this.props.profile} status={this.props.status} updateStatus={this.props.updateStatus} /> // презинтационный компонент
+            < Profile {...this.props}
+                profile={this.props.profile}
+                status={this.props.status}
+                updateStatus={this.props.updateStatus} /> // презентационный компонент
         )
     }
 }
 
-let mapStateToProps = (state) => ({      // круглые скобки, чтобы ф-я вернула объект, не воспринималась как тело ф-ии
+let mapStateToProps = (state) => {      // круглые скобки, чтобы ф-я вернула объект, не воспринималась как тело ф-ии
+    //console.log("mapStateToProps PROFILE")
+    return({
     profile: state.profilePage.profile,
-    status: state.profilePage.status
-});
+    status: state.profilePage.status,
+    authorizedUserId: state.auth.userId,
+    isAuth: state.auth.isAuth
+    })
+}
 
 export default compose(
     connect(mapStateToProps, { getUserProfile, getStatus, updateStatus }),
     withRouter,
-   // withAuthRedirect
 )(ProfileContainer);
 
 
-/* 
+/*
 let AuthRedirectComponent = withAuthRedirect(ProfileContainer);  // в hoc передаем целевой компонент и создает новый
 let WithUrlDataContainerComponent = withRouter(AuthRedirectComponent) // получение данных из URL
 
