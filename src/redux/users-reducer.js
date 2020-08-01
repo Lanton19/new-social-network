@@ -1,4 +1,5 @@
 import { usersAPI } from "../api/api";
+import { updateObjectInArray } from "../utils/object-helpers";
 
 const FOLLOW = 'FOLLOW'; // подписан 
 const UNFOLLOW = 'UNFOLLOW';  //не подписан
@@ -9,7 +10,7 @@ const TOGGLE_IS_FETCHING = 'TOGGLE_IS_FETCHING'; // переключи знач�
 const TOGGLE_IS_FOLLOWONG_PROGRESS = 'TOGGLE_IS_FOLLOWONG_PROGRESS'; // переключение процесса подписки
 
 let initialState = {                       //первоначальная инициализация
-    users: [ ],                             // массив пользователей
+    users: [],                             // массив пользователей
     pageSize: 5,                           // пользователей на странице(размер страницы)
     totalUsersCount: 0,                    // общее количество пользователей
     page: 1,                        // текущая страница
@@ -22,23 +23,12 @@ const usersReducer = (state = initialState, action) => {
         case FOLLOW:
             return {
                 ...state,
-                // users: [...state.users],
-                users: state.users.map(u => {   // берем массив пользователей, делаем копию
-                    if (u.id === action.userId) {// если userID равен нужному нам пользователю
-                        return { ...u, followed: true }       // делаем копию пользователя и меняем followed
-                    }
-                    return u;                     // возвращаем его же
-                })
+                users: updateObjectInArray(state.users, action.userId, "id", {followed: true} )
             }
         case UNFOLLOW:
             return {
                 ...state,
-                users: state.users.map(u => {   // берем массив пользователей, делаем копию
-                    if (u.id === action.userId) {// если userID равен нужному нам пользователю
-                        return { ...u, followed: false }       // делаем копию пользователя и меняем followed
-                    }
-                    return u;                     // возвращаем его же
-                })
+                users: updateObjectInArray(state.users, action.userId, "id", {followed: false} )
             }
         case SET_USERS: {
             return { ...state, users: action.users }   //перезатираем user-ов, теми что пришли из action
@@ -82,42 +72,34 @@ export const toggleIsFetching = (isFetching) => ({ type: TOGGLE_IS_FETCHING, isF
 export const toggleFollowingProgress = (isFetching, userID) => ({ type: TOGGLE_IS_FOLLOWONG_PROGRESS, isFetching, userID })
 
 export const requestUsers = (page, pageSize) => {
-    return (dispatch) => {
-
+    return async (dispatch) => {
         dispatch(toggleIsFetching(true));  // активация крутилки
         dispatch(setCurrentPage(page));
 
-        usersAPI.requestUsers(page, pageSize).then(data => {    // когда придет ответ от сервера, получаем data
-            dispatch(toggleIsFetching(false));
-            dispatch(setUsers(data.items));                // устанавливаем пользователей из response
-            dispatch(setTotalUsersCount(data.totalCount));
-        });
+        let data = await usersAPI.requestUsers(page, pageSize); // когда придет ответ от сервера, получаем data   
+        dispatch(toggleIsFetching(false));
+        dispatch(setUsers(data.items));                // устанавливаем пользователей из response
+        dispatch(setTotalUsersCount(data.totalCount));
     }
 }
 
+const followUnfollowFlow = async (dispatch, userId, apiMethod, actionCreator) => {
+    dispatch(toggleFollowingProgress(true, userId));  // переключение процесса подписки перед запросом
+    let response = await apiMethod(userId);  // когда придет ответ от сервера                  
+    if (response.data.resultCode == 0) { //если нет ошибок(подтверждение от сервера что подписка произошла)   
+        dispatch(actionCreator(userId));              // вызвать collback 
+    }
+    dispatch(toggleFollowingProgress(false, userId));  // переключение процесса подписки после запроса
+}
 export const follow = (userId) => {
-    return (dispatch) => {
-        dispatch(toggleFollowingProgress(true, userId));  // переключение процесса подписки перед запросом
-        usersAPI.follow(userId)
-            .then(response => {                    // когда придет ответ от сервера
-                if (response.data.resultCode == 0) { //если нет ошибок(подтверждение от сервера что подписка произошла)   
-                    dispatch(followSuccess(userId));              // вызвать collback
-                }
-                dispatch(toggleFollowingProgress(false, userId));  // переключение процесса подписки после запроса
-            });
+    return async (dispatch) => {
+        followUnfollowFlow(dispatch, userId, usersAPI.follow.bind(usersAPI), followSuccess);
     }
 }
 
 export const unfollow = (userId) => {
-    return (dispatch) => {
-        dispatch(toggleFollowingProgress(true, userId));  // переключение процесса подписки перед запросом
-        usersAPI.unfollow(userId)
-            .then(response => {                    // когда придет ответ от сервера
-                if (response.data.resultCode == 0) { //если нет ошибок(подтверждение от сервера что подписка произошла)   
-                    dispatch(unfollowSuccess(userId));              // вызвать collback
-                }
-                dispatch(toggleFollowingProgress(false, userId));  // переключение процесса подписки после запроса
-            });
+    return async (dispatch) => {
+        followUnfollowFlow(dispatch, userId, usersAPI.unfollow.bind(usersAPI), unfollowSuccess);
     }
 }
 

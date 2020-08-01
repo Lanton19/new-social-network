@@ -3,6 +3,7 @@ import { usersAPI, profileAPI } from "../api/api";
 const ADD_POST = 'ADD-POST'; // константа чтобы не использовать строки, дабы не допустить ошибки в написании(компилятор ругнется при опечатке)
 const SET_USER_PROFILE = 'SET_USER_PROFILE'; // получение профайла
 const SET_STATUS = 'SET_STATUS';   // получение статуса
+const DELETE_POST = 'DELETE_POST';   // удаление поста
 
 let initialState = {                       //первоначальная инициализация
     posts: [
@@ -33,6 +34,9 @@ const profileReducer = (state = initialState, action) => {
         case SET_STATUS: {
             return { ...state, status: action.status }
         }
+        case DELETE_POST: {
+            return { ...state, post: state.post.filter(p => p.id != action.postId) }
+        }
         default:
             return state;
     }
@@ -42,24 +46,21 @@ const profileReducer = (state = initialState, action) => {
 export const addPostActionCreator = (newPostText) => ({ type: ADD_POST, newPostText })
 export const setUserProfile = (profile) => ({ type: SET_USER_PROFILE, profile })
 export const setStatus = (status) => ({ type: SET_STATUS, status })
-export const getUserProfile = (userId) => (dispatch) => {     // запросить юзерский профайл, санка
-    usersAPI.getProfile(userId).then(response => {           // доступ к телу объекта
-        dispatch(setUserProfile(response.data));
-    });
+export const deletePost = (postId) => ({ type: DELETE_POST, postId })
+
+export const getUserProfile = (userId) => async (dispatch) => {     // запросить юзерский профайл, санка
+    let response = await usersAPI.getProfile(userId);
+    dispatch(setUserProfile(response.data));
 }
-export const getStatus = (userId) => (dispatch) => {     // запросить юзерский статус, санка
-    profileAPI.getStatus(userId)
-        .then(response => {            // доступ к телу объекта
-            dispatch(setStatus(response.data));
-        });
+export const getStatus = (userId) => async (dispatch) => {     // запросить юзерский статус, санка
+    let response = await profileAPI.getStatus(userId);
+    dispatch(setStatus(response.data));
 }
-export const updateStatus = (status) => (dispatch) => {     // обновить юзерский статус, санка
-    profileAPI.updateStatus(status)
-        .then(response => {           // доступ к телу объекта
-            if (response.data.resultCode === 0) {
-                dispatch(setStatus(status));
-            }
-        });
+export const updateStatus = (status) => async (dispatch) => {     // обновить юзерский статус, санка
+    let response = await profileAPI.updateStatus(status);
+    if (response.data.resultCode === 0) {
+        dispatch(setStatus(status));
+    }
 }
 
 export default profileReducer;
