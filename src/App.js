@@ -7,10 +7,12 @@ import DialogsContainer from './components/Dialogs/DialogsContainer';
 import UsersContainer from './components/Users/UsersContainer';
 import ProfileContainer from './components/Profile/ProfileContainer';
 import Login from './components/Login/Login';
-import { connect } from 'react-redux';
+import { connect, Provider } from 'react-redux';
 import { compose } from 'redux';
 import { initializApp } from './redux/app-reducer';
 import Preloader from './components/common/Preloader/Preloader';
+import store from './redux/redux-store';
+import { BrowserRouter } from "react-router-dom";
 
 class App extends Component {
   componentDidMount() {
@@ -47,6 +49,17 @@ const mapStateToProps = (state) => ({
   initialized: state.app.initialized
 })
 
-export default compose(
+let AppContainer = compose(
   withRouter,
   connect(mapStateToProps, { initializApp }))(App);
+
+const SamuraiJSApp = (props) => {
+  return <BrowserRouter>
+    <Provider store={store}>
+      <AppContainer />
+    </Provider>
+  </BrowserRouter>
+}
+// Provider из react-redux - передаем store созданный с помощью createStore.
+// Provider использует context API для того, чтобы засунуть в context store, чтобы дочерние компоненты могли до него достучаться 
+export default SamuraiJSApp;

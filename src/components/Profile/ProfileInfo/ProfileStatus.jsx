@@ -22,16 +22,15 @@ class ProfileStatus extends React.Component {
     onStatusChange = (e) => {       // e -onChange
         this.setState({
             status: e.currentTarget.value
-        })  
+        })
     }
 
-    componentDidUpdate (prevProps, prevState) {       // предыдущие пропсы и state
-       if (prevProps.status != this.props.status) {  // если в предыдущих пропсах статус не равен текущим пропсам
-         this.setState({
-             status: this.props.status               // засинхронизировать state
-         });
-       } 
-        console.log('componentDidUpdate')
+    componentDidUpdate(prevProps, prevState) {       // предыдущие пропсы и state
+        if (prevProps.status != this.props.status) {  // если в предыдущих пропсах статус не равен текущим пропсам
+            this.setState({
+                status: this.props.status               // засинхронизировать state
+            });
+        }
     }
     render() {
         return (
@@ -43,8 +42,9 @@ class ProfileStatus extends React.Component {
                 }
                 {this.state.editMode &&
                     <div>
-                        <input onChange={this.onStatusChange} autoFocus={true} onBlur={this.deactivateEditMode} 
-                        value={this.state.status } />
+                        <input onChange={this.onStatusChange} autoFocus={true} 
+                            onBlur={this.deactivateEditMode.bind(this)}
+                            value={this.state.status} />
                     </div>
                 }
             </div>

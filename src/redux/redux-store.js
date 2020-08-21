@@ -1,4 +1,4 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
+import { createStore, combineReducers, applyMiddleware, compose } from "redux";
 import profileReducer from "./profile-reducer";
 import dialogsReducer from "./dialogs-reducer"; 
 import sidebarReducer from "./sidebar-reducer";
@@ -18,9 +18,12 @@ let reducers = combineReducers({           // объединение редюс�
     app: appReducer
 }); 
 
-let store = createStore(reducers, applyMiddleware (thunkMiddleware)); // создание store и передача 
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(reducers, composeEnhancers(applyMiddleware(thunkMiddleware)));
+
+//let store = createStore(reducers, applyMiddleware (thunkMiddleware)); // создание store и передача 
 //закомбайнерных reducer. applyMiddleware - принять промежуточные слои для санок 
 
-window.store = store;   // сохранить store глобально. в объект window
+window.__store__ = store;   // сохранить store глобально. в объект window
 
 export default store;
