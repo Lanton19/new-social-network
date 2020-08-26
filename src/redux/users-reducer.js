@@ -11,7 +11,7 @@ const TOGGLE_IS_FOLLOWONG_PROGRESS = 'TOGGLE_IS_FOLLOWONG_PROGRESS'; // пере
 
 let initialState = {                       //первоначальная инициализация
     users: [],                             // массив пользователей
-    pageSize: 5,                           // пользователей на странице(размер страницы)
+    pageSize: 10,                           // пользователей на странице(размер страницы)
     totalUsersCount: 0,                    // общее количество пользователей
     page: 1,                        // текущая страница
     isFetching: true,                      // получаем данные от сервера?

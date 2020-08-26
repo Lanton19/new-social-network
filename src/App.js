@@ -1,11 +1,9 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import './App.css';
 import HeaderContainer from './components/Header/HeaderContainer';
 import Navbar from "./components/Navbar/Navbar";
 import { Route, withRouter } from "react-router-dom";
-import DialogsContainer from './components/Dialogs/DialogsContainer';
 import UsersContainer from './components/Users/UsersContainer';
-import ProfileContainer from './components/Profile/ProfileContainer';
 import Login from './components/Login/Login';
 import { connect, Provider } from 'react-redux';
 import { compose } from 'redux';
@@ -13,6 +11,11 @@ import { initializApp } from './redux/app-reducer';
 import Preloader from './components/common/Preloader/Preloader';
 import store from './redux/redux-store';
 import { BrowserRouter } from "react-router-dom";
+import { withSuspense } from './hoc/withSuspense';
+//import DialogsContainer from './components/Dialogs/DialogsContainer';
+const DialogsContainer = React.lazy(() => import('./components/Dialogs/DialogsContainer')); // ленивая загрузка
+//import ProfileContainer from './components/Profile/ProfileContainer';
+const ProfileContainer = React.lazy(() => import('././components/Profile/ProfileContainer'));
 
 class App extends Component {
   componentDidMount() {
@@ -29,10 +32,10 @@ class App extends Component {
         <Navbar />
         <div className='app-wrapper-content'>
           <Route path='/dialogs'                   // следит за url и загружает coolback который передали
-            render={() => <DialogsContainer />} />
+            render={withSuspense(DialogsContainer)} />
 
           <Route path='/profile/:userId?'           // в url есть параметр userID
-            render={() => <ProfileContainer />} />
+            render={withSuspense(ProfileContainer ) } />
 
           <Route path='/users'
             render={() => <UsersContainer />} />
