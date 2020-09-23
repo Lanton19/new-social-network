@@ -16,7 +16,7 @@ const FormControl = ({ input, meta: { touched, error }, children }) => {
 
 export const Textarea = (props) => {
     const { input, meta, child, ...restPprops } = props;
-    return <FormControl {...props}><textarea {...input} {...restPprops} /></ FormControl>
+    return <FormControl {...props}><textarea {...input} {...restPprops} /></ FormControl >
     // отрисовываем FormControl и внутрь передаем child
 }
 

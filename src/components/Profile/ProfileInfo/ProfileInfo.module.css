@@ -6,3 +6,9 @@
     width: 1100px;
     height: 200px;
 }
+.mainPhoto{
+    max-width: 200px;
+}
+.contact{
+    padding-left: 10px;
+}

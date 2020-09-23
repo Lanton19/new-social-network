@@ -10,7 +10,7 @@ import { compose } from 'redux';
 import { initializApp } from './redux/app-reducer';
 import Preloader from './components/common/Preloader/Preloader';
 import store from './redux/redux-store';
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import { withSuspense } from './hoc/withSuspense';
 //import DialogsContainer from './components/Dialogs/DialogsContainer';
 const DialogsContainer = React.lazy(() => import('./components/Dialogs/DialogsContainer')); // ленивая загрузка
@@ -57,11 +57,11 @@ let AppContainer = compose(
   connect(mapStateToProps, { initializApp }))(App);
 
 const SamuraiJSApp = (props) => {
-  return <BrowserRouter>
+  return <HashRouter>
     <Provider store={store}>
       <AppContainer />
     </Provider>
-  </BrowserRouter>
+  </HashRouter>
 }
 // Provider из react-redux - передаем store созданный с помощью createStore.
 // Provider использует context API для того, чтобы засунуть в context store, чтобы дочерние компоненты могли до него достучаться 
